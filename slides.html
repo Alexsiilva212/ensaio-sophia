@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Slideshow Sophia</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+overflow:hidden;
+font-family:Arial;
+}
+
+/* SLIDES */
+
+.slideshow{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+overflow:hidden;
+z-index:1;
+}
+
+.slide{
+position:absolute;
+width:100%;
+height:100%;
+opacity:0;
+transition:opacity 2s ease;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.slide img{
+width:110%;
+height:110%;
+object-fit:cover;
+animation:kenburns 10s linear;
+}
+
+@keyframes kenburns{
+
+0%{
+transform:scale(1) translate(0,0);
+}
+
+100%{
+transform:scale(1.15) translate(-2%, -2%);
+}
+
+}
+
+.slide.ativo{
+opacity:1;
+}
+
+/* CONTROLES */
+
+.seta{
+position:fixed;
+top:50%;
+transform:translateY(-50%);
+font-size:60px;
+color:white;
+cursor:pointer;
+padding:20px;
+z-index:10;
+}
+
+.esquerda{ left:20px; }
+.direita{ right:20px; }
+
+.contador{
+position:fixed;
+bottom:30px;
+left:30px;
+color:white;
+font-size:20px;
+background:rgba(0,0,0,0.5);
+padding:10px 15px;
+border-radius:6px;
+z-index:10;
+}
+
+/* BOTÃO VOLTAR */
+
+.voltar{
+position:fixed;
+top:20px;
+left:20px;
+background:white;
+padding:8px 14px;
+border-radius:8px;
+text-decoration:none;
+color:black;
+z-index:20;
+}
+
+/* CONTROLES SUPERIORES */
+
+.controles-topo{
+
+position:fixed;
+top:20px;
+right:20px;
+display:flex;
+gap:12px;
+z-index:20;
+
+}
+
+.controles-topo button{
+
+background:white;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+cursor:pointer;
+font-size:14px;
+
+}
+
+.controles-topo button:hover{
+
+opacity:0.85;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="Album.html" class="voltar">← Voltar</a>
+
+<div class="controles-topo">
+
+<button onclick="toggleMusica()">🎵 Música</button>
+
+<button onclick="toggleFullscreen()">⛶ Tela cheia</button>
+
+</div>
+
+<div class="slideshow" id="slideshow"></div>
+
+<div class="seta esquerda" onclick="anterior()">❮</div>
+<div class="seta direita" onclick="proxima()">❯</div>
+
+<div class="contador" id="contador"></div>
+
+<audio id="musica" loop>
+<source src="musica.mp3/musica.mp3.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+let totalFotos = 271
+
+let slideshow = document.getElementById("slideshow")
+let contador = document.getElementById("contador")
+let musica = document.getElementById("musica")
+
+let fotos=[]
+
+for(let i=1;i<=totalFotos;i++){
+fotos.push("SOPHIA/SMASH-"+i+".jpg")
+}
+
+/* EMBARALHAR */
+
+fotos.sort(()=>Math.random()-0.5)
+
+let slides=[]
+
+fotos.forEach(src=>{
+
+let div=document.createElement("div")
+div.className="slide"
+
+let img=document.createElement("img")
+img.src=src
+
+div.appendChild(img)
+
+slideshow.appendChild(div)
+
+slides.push(div)
+
+})
+
+let index=0
+
+function mostrar(){
+
+slides.forEach(s=>s.classList.remove("ativo"))
+
+slides[index].classList.add("ativo")
+
+contador.innerText=(index+1)+" / "+slides.length
+
+}
+
+/* PRÓXIMA FOTO ALEATÓRIA */
+
+function proxima(){
+
+let novoIndex
+
+do{
+novoIndex = Math.floor(Math.random()*slides.length)
+}while(novoIndex === index)
+
+index = novoIndex
+
+mostrar()
+
+}
+
+/* FOTO ANTERIOR ALEATÓRIA */
+
+function anterior(){
+
+let novoIndex
+
+do{
+novoIndex = Math.floor(Math.random()*slides.length)
+}while(novoIndex === index)
+
+index = novoIndex
+
+mostrar()
+
+}
+
+/* TROCA AUTOMÁTICA */
+
+setInterval(proxima,8000)
+
+/* TECLADO */
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="ArrowRight") proxima()
+
+if(e.key==="ArrowLeft") anterior()
+
+})
+
+/* FULLSCREEN */
+
+function toggleFullscreen(){
+
+if(!document.fullscreenElement){
+document.documentElement.requestFullscreen()
+}else{
+document.exitFullscreen()
+}
+
+}
+
+/* MUSICA */
+
+function toggleMusica(){
+
+if(musica.paused){
+musica.play()
+}else{
+musica.pause()
+}
+
+}
+
+mostrar()
+
+</script>
+
+</body>
+</html>

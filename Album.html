@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ensaio da Sophia - Galeria</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:#fdf6f8;
+text-align:center;
+overflow-x:hidden;
+}
+
+/* MENU */
+
+.menu{
+background:#f8d7e1;
+padding:12px;
+display:flex;
+justify-content:center;
+gap:30px;
+font-weight:500;
+}
+
+.menu a{
+text-decoration:none;
+color:#7a3e52;
+font-size:16px;
+transition:0.3s;
+}
+
+.menu a:hover{
+opacity:0.7;
+}
+
+/* HEADER */
+
+header{
+background:white;
+padding:30px 20px;
+box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+header h1{
+font-family:'Playfair Display',serif;
+color:#b35c7a;
+font-size:36px;
+margin:0;
+}
+
+header p{
+color:#888;
+margin-top:6px;
+font-size:16px;
+}
+
+/* FAIXA DE FOTOS */
+
+.faixa-container{
+width:100%;
+overflow:hidden;
+background:#090909;
+padding:6px 0;
+}
+
+.faixa{
+display:flex;
+gap:10px;
+animation:scroll 60s linear infinite;
+}
+
+.faixa img{
+height:120px;
+border-radius:8px;
+}
+
+@keyframes scroll{
+
+0%{ transform:translateX(0); }
+
+100%{ transform:translateX(-50%); }
+
+}
+
+/* GALERIA INTELIGENTE */
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+grid-auto-rows:200px;
+gap:20px;
+padding:40px;
+}
+
+.gallery img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:12px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.gallery img:hover{
+transform:scale(1.03);
+}
+
+/* RESPONSIVO */
+
+@media (max-width:1200px){
+.gallery{ grid-template-columns:repeat(4,1fr); }
+}
+
+@media (max-width:900px){
+.gallery{ grid-template-columns:repeat(3,1fr); }
+}
+
+@media (max-width:600px){
+.gallery{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* VIEWER */
+
+.viewer{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:black;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+}
+
+.viewer img{
+max-width:95vw;
+max-height:95vh;
+object-fit:contain;
+}
+
+.close{
+position:absolute;
+top:20px;
+right:40px;
+font-size:35px;
+color:white;
+cursor:pointer;
+}
+
+.download{
+position:absolute;
+bottom:30px;
+background:#e98aa8;
+color:white;
+padding:12px 25px;
+border-radius:6px;
+text-decoration:none;
+font-size:18px;
+}
+
+.seta{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+font-size:60px;
+color:white;
+cursor:pointer;
+padding:20px;
+user-select:none;
+}
+
+.esquerda{ left:30px; }
+.direita{ right:30px; }
+
+</style>
+
+</head>
+
+<body>
+
+<!-- MENU -->
+
+<div class="menu">
+<a href="Album.html">Galeria</a>
+<a href="slides.html">Slideshow</a>
+</div>
+
+<header>
+
+<h1>Ensaio da Sophia</h1>
+<p>Galeria do Ensaio</p>
+
+</header>
+
+<!-- FAIXA DE FOTOS -->
+
+<div class="faixa-container">
+<div class="faixa" id="faixa"></div>
+</div>
+
+<!-- GALERIA -->
+
+<div class="gallery" id="gallery"></div>
+
+<!-- VIEWER -->
+
+<div class="viewer" id="viewer">
+
+<div class="close" onclick="fechar()">✖</div>
+
+<div class="seta esquerda" onclick="anterior()">❮</div>
+<div class="seta direita" onclick="proxima()">❯</div>
+
+<img id="fotoGrande">
+
+<a id="downloadBtn" class="download" download>Baixar Foto</a>
+
+</div>
+
+<script>
+
+let gallery = document.getElementById("gallery")
+let faixa = document.getElementById("faixa")
+
+let totalFotos = 271
+
+/* GALERIA PRINCIPAL */
+
+for(let i = 1; i <= totalFotos; i++){
+
+let img = document.createElement("img")
+
+img.src = "SOPHIA/SMASH-" + i + ".jpg"
+
+img.onload = function(){
+
+if(img.naturalHeight > img.naturalWidth){
+
+img.style.gridRow = "span 2"
+
+}
+
+}
+
+img.onclick = function(){
+abrir(this)
+}
+
+gallery.appendChild(img)
+
+}
+
+/* FAIXA SUPERIOR COM FOTOS ALEATÓRIAS */
+
+for(let i = 0; i < 40; i++){
+
+let n = Math.floor(Math.random()*totalFotos)+1
+
+let img = document.createElement("img")
+
+img.src = "SOPHIA/SMASH-" + n + ".jpg"
+
+faixa.appendChild(img)
+
+}
+
+/* VIEWER */
+
+let imagens
+let indexAtual = 0
+
+function abrir(img){
+
+imagens = document.querySelectorAll(".gallery img")
+
+const viewer = document.getElementById("viewer")
+const fotoGrande = document.getElementById("fotoGrande")
+const downloadBtn = document.getElementById("downloadBtn")
+
+viewer.style.display="flex"
+
+fotoGrande.src = img.src
+downloadBtn.href = img.src
+
+indexAtual = [...imagens].indexOf(img)
+
+}
+
+function fechar(){
+document.getElementById("viewer").style.display="none"
+}
+
+function proxima(){
+
+indexAtual++
+
+if(indexAtual >= imagens.length){
+indexAtual = 0
+}
+
+mostrarImagem()
+
+}
+
+function anterior(){
+
+indexAtual--
+
+if(indexAtual < 0){
+indexAtual = imagens.length - 1
+}
+
+mostrarImagem()
+
+}
+
+function mostrarImagem(){
+
+const fotoGrande = document.getElementById("fotoGrande")
+const downloadBtn = document.getElementById("downloadBtn")
+
+fotoGrande.src = imagens[indexAtual].src
+downloadBtn.href = imagens[indexAtual].src
+
+}
+
+document.addEventListener("keydown", function(e){
+
+if(e.key === "ArrowRight") proxima()
+if(e.key === "ArrowLeft") anterior()
+if(e.key === "Escape") fechar()
+
+})
+
+</script>
+
+</body>
+</html>
